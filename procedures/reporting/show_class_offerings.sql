@@ -24,17 +24,17 @@ IS
         JOIN Enrollments ON
             Classes.class_id = Enrollments.class_id
         WHERE Classes.start_date BETWEEN 
-            MVL(p_start_date, ADD_MONTHS(SYSDATE,-12)) AND 
-            MVL(p_end_date, SYSDATE);
+            NVL(p_start_date, ADD_MONTHS(SYSDATE,-12)) AND 
+            NVL(p_end_date, SYSDATE);
 BEGIN
-    FOR rec IN c_class_offerings LOOP
+    FOR r IN c_class_offerings LOOP
         DBMS_OUTPUT.PUT_LINE(
-            'CLASS_ID: ' || rec.class_id ||
-            ' | START_DATE: ' || TO_CHAR(rec.start_date, 'YYYY-MM-DD') ||
-            ' | COURSE_TITLE: ' || rec.course_title ||
-            ' | SECTION_CODE: ' || rec.section_code ||
-            ' | INSTRUCTOR: ' || rec.instructor_name ||
-            ' | AVERAGE_GRADE: ' || ROUND(rec.average_grade, 2)
+            'CLASS_ID: ' || r.class_id ||
+            ' | START_DATE: ' || TO_CHAR(r.start_date, 'YYYY-MM-DD') ||
+            ' | COURSE_TITLE: ' || r.course_title ||
+            ' | SECTION_CODE: ' || r.section_code ||
+            ' | INSTRUCTOR: ' || r.instructor_name ||
+            ' | AVERAGE_GRADE: ' || average_grade
         );
     END LOOP;
 END;
