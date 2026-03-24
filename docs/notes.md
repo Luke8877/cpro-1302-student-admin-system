@@ -1,4 +1,4 @@
-# Project Structure Overview (CPRO 1302)
+# Project Structure Overview 
 
 ## Goal
 
@@ -121,7 +121,7 @@ I will handle the **Enrollment module**, including:
 
 - `enroll_student_in_class`
 - `drop_student_from_class`
-- `student_class_list` (both versions)
+- `student_class_list`
 - `enrollment_pkg`
 
 This section focuses on the **main logic and validation**.
