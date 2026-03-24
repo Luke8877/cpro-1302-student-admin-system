@@ -14,5 +14,4 @@
 @../triggers/audit_grade_change.sql
 
 -- 4. Tests
-@../tests/success_cases.sql
-@../tests/error_cases.sql
+@../tests/tests.sql

@@ -1,5 +1,3 @@
--- TODO: implement procedure
-
 create or replace procedure drop_student_from_class (
    p_stu_id   in number,
    p_class_id in number

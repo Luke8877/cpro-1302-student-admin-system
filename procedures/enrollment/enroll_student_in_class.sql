@@ -1,5 +1,3 @@
--- TODO: implement procedure
-
 create or replace procedure enroll_student_in_class (
    p_stu_id   in number,
    p_class_id in number
