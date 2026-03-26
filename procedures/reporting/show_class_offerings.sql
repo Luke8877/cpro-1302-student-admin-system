@@ -12,7 +12,7 @@ IS
             Classes.start_date,
             Courses.course_title,
             Sections.section_code,
-            Instructors.instructor_name,
+            Instructors.first_name || ' ' || Instructors.last_name AS instructor_name,
             compute_average_grade(Classes.class_id) AS average_grade --function call
         FROM Classes
         JOIN Courses ON
@@ -21,8 +21,6 @@ IS
             Courses.section_code = Sections.section_code
         JOIN Instructors ON
             Classes.instr_id = Instructors.instructor_id
-        JOIN Enrollments ON
-            Classes.class_id = Enrollments.class_id
         WHERE Classes.start_date BETWEEN 
             NVL(p_start_date, ADD_MONTHS(SYSDATE,-12)) AND 
             NVL(p_end_date, SYSDATE);
@@ -33,10 +31,12 @@ BEGIN
             ' | START_DATE: ' || TO_CHAR(r.start_date, 'YYYY-MM-DD') ||
             ' | COURSE_TITLE: ' || r.course_title ||
             ' | SECTION_CODE: ' || r.section_code ||
-            ' | INSTRUCTOR: ' || r.instructor_name ||
-            ' | AVERAGE_GRADE: ' || average_grade
+            ' | INSTRUCTOR: ' || r.first_name ||
+            ' | AVERAGE_GRADE: ' || r.average_grade
         );
     END LOOP;
 END;
 /
+
+SELECT * FROM Instructors
         
