@@ -39,6 +39,3 @@ begin
    end loop;
 end;
 /
-
-select *
-  from enrollments;

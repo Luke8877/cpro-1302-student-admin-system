@@ -10,7 +10,7 @@ IS
         SELECT
             Classes.class_id,
             Classes.start_date,
-            Courses.course_title,
+            Courses.title,
             Sections.section_code,
             Instructors.first_name || ' ' || Instructors.last_name AS instructor_name,
             compute_average_grade(Classes.class_id) AS average_grade --function call
@@ -29,14 +29,13 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE(
             'CLASS_ID: ' || r.class_id ||
             ' | START_DATE: ' || TO_CHAR(r.start_date, 'YYYY-MM-DD') ||
-            ' | COURSE_TITLE: ' || r.course_title ||
+            ' | COURSE_TITLE: ' || r.title ||
             ' | SECTION_CODE: ' || r.section_code ||
-            ' | INSTRUCTOR: ' || r.first_name ||
+            ' | INSTRUCTOR: ' || r.instructor_name ||
             ' | AVERAGE_GRADE: ' || r.average_grade
         );
     END LOOP;
 END;
 /
 
-SELECT * FROM Instructors
         
