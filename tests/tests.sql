@@ -11,7 +11,7 @@ pro    ============================================
 pro   
 pro    ===== ENROLLMENT MODULE =====
 
-pro    --- Enroll student (SUCCESS) ---
+pro    --- TEST 1: Enroll student (SUCCESS) ---
 
 begin
    enrollment_pkg.enroll_student_in_class(
@@ -21,7 +21,7 @@ begin
 end;
 /
 
-pro    --- Enroll student again (ERROR EXPECTED) ---
+pro    --- TEST 2: Enroll student again (ERROR EXPECTED) ---
 
 begin
    enrollment_pkg.enroll_student_in_class(
@@ -31,7 +31,7 @@ begin
 end;
 /
 
-pro    --- List classes for student 101 ---
+pro    --- TEST 3: List classes for student 101 ---
 
 begin
    enrollment_pkg.student_class_list(
@@ -42,7 +42,7 @@ begin
 end;
 /
 
-pro    --- List ALL enrollments (overloaded version) ---
+pro    --- TEST 4: List ALL enrollments (overloaded version) ---
 
 begin
    enrollment_pkg.student_class_list(
@@ -52,7 +52,7 @@ begin
 end;
 /
 
-pro    --- No results (invalid date range) ---
+pro    --- TEST 5: No results (invalid date range) ---
 
 begin
    enrollment_pkg.student_class_list(
@@ -63,7 +63,7 @@ begin
 end;
 /
 
-pro    --- No results (invalid student) ---
+pro    --- TEST 6: No results (invalid student) ---
 
 begin
    enrollment_pkg.student_class_list(
@@ -74,7 +74,7 @@ begin
 end;
 /
 
-pro    --- Drop student (SUCCESS) ---
+pro    --- TEST 7: Drop student (SUCCESS) ---
 
 begin
    enrollment_pkg.drop_student_from_class(
@@ -84,7 +84,7 @@ begin
 end;
 /
 
-pro    --- Drop student again (ERROR EXPECTED) ---
+pro    --- TEST 8: Drop student again (ERROR EXPECTED) ---
 
 begin
    enrollment_pkg.drop_student_from_class(
@@ -101,14 +101,14 @@ end;
 pro   
 pro    ===== REPORTING MODULE =====
 
-pro    --- Show missing grades ---
+pro    --- TEST 9: Show missing grades ---
 
 begin
    reporting_pkg.show_missing_grades;
 end;
 /
 
-pro    --- Show class offerings ---
+pro    --- TEST 10: Show class offerings ---
 
 begin
    reporting_pkg.show_class_offerings(
@@ -125,7 +125,7 @@ end;
 pro   
 pro    ===== FUNCTION TESTS =====
 
-pro    --- Count classes per course ---
+pro    --- TEST 11: Count classes per course ---
 
 declare
    v_count number;
@@ -135,7 +135,7 @@ begin
 end;
 /
 
-pro    --- Convert numeric grade to letter ---
+pro    --- TEST 12: Convert numeric grade to letter ---
 
 declare
    v_letter varchar2(2);
@@ -152,14 +152,14 @@ end;
 pro   
 pro    ===== ASSESSMENT MODULE =====
 
-pro    --- Create assignment ---
+pro    --- TEST 13: Create assignment ---
 
 begin
    assessment_pkg.create_assignment('Final Exam');
 end;
 /
 
-pro    --- Enter student grade (SUCCESS) ---
+pro    --- TEST 14: Enter student grade (SUCCESS) ---
 
 begin
    assessment_pkg.enter_student_grade(
@@ -171,7 +171,7 @@ begin
 end;
 /
 
-pro    --- Enter student grade (ERROR EXPECTED - invalid student) ---
+pro    --- TEST 15: Enter student grade (ERROR EXPECTED - invalid student) ---
 
 begin
    assessment_pkg.enter_student_grade(
@@ -190,7 +190,7 @@ end;
 pro   
 pro    ===== TRIGGER TEST =====
 
-pro    --- Update final grade (should trigger audit) ---
+pro    --- TEST 16: Update final grade (should trigger audit) ---
 
 update enrollments
    set
