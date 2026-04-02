@@ -1,136 +1,149 @@
---TODO Implement package
-
 -- package specifications
-CREATE OR REPLACE PACKAGE reporting_pkg IS
-    
-    PROCEDURE show_missing_grades (
-       p_start_date DATE DEFAULT NULL,
-       p_end_date   DATE DEFAULT NULL
-    );
+create or replace package reporting_pkg is
+   procedure show_missing_grades (
+      p_start_date date default null,
+      p_end_date   date default null
+   );
 
-    PROCEDURE show_class_offerings (
-       p_start_date DATE DEFAULT NULL,
-       p_end_date   DATE DEFAULT NULL
-    );
+   procedure show_class_offerings (
+      p_start_date date default null,
+      p_end_date   date default null
+   );
 
-    FUNCTION count_classes_per_course (
-       p_course_id Classes.course_id%TYPE
-    ) RETURN NUMBER;
+   function count_classes_per_course (
+      p_course_id classes.course_id%type
+   ) return number;
 
-END reporting_pkg;
+   function compute_average_grade (
+      p_class_id classes.class_id%type
+   ) return number;
+
+end reporting_pkg;
 /
 
 --package body
-CREATE OR REPLACE PACKAGE BODY reporting_pkg IS
+create or replace package body reporting_pkg is
 
     -- show missing grades procedure
-    PROCEDURE show_missing_grades (
-       p_start_date in date default null,
-       p_end_date   in date default null
-    ) 
-    IS
+   procedure show_missing_grades (
+      p_start_date in date default null,
+      p_end_date   in date default null
+   ) is
         -- Cursor to fetch required records
-        CURSOR c_missing_grades is
-        SELECT class_id,
-              stu_id,
-              status,
-              enrollment_date
-        FROM enrollments
-        WHERE final_letter_grade IS NULL
-        AND enrollment_date BETWEEN nvl(
-          p_start_date,
-          add_months(
-               sysdate,
-               -12
-            )
-           ) AND nvl(
-              p_end_date,
-              sysdate
-           )
-        ORDER BY enrollment_date desc;
-    BEGIN
+      cursor c_missing_grades is
+      select class_id,
+             stu_id,
+             status,
+             enrollment_date
+        from enrollments
+       where final_letter_grade is null
+         and enrollment_date between nvl(
+         p_start_date,
+         add_months(
+                 sysdate,
+                 -12
+              )
+      ) and nvl(
+         p_end_date,
+         sysdate
+      )
+       order by enrollment_date desc;
+   begin
         -- Loop through results and display
-       FOR rec IN c_missing_grades LOOP
-          dbms_output.put_line('CLASS_ID: '
-                               || rec.class_id
-                               || ' | STU_ID: '
-                               || rec.stu_id
-                               || ' | STATUS: '
-                               || rec.status
-                               || ' | ENROLLMENT_DATE: ' || to_char(
-             rec.enrollment_date,
-             'YYYY-MM-DD'
-          ));
-       END LOOP;
-    END;
+      for rec in c_missing_grades loop
+         dbms_output.put_line('CLASS_ID: '
+                              || rec.class_id
+                              || ' | STU_ID: '
+                              || rec.stu_id
+                              || ' | STATUS: '
+                              || rec.status
+                              || ' | ENROLLMENT_DATE: ' || to_char(
+            rec.enrollment_date,
+            'YYYY-MM-DD'
+         ));
+      end loop;
+   end;
     
     -- show class offerings procedure
-    PROCEDURE show_class_offerings (
-    p_start_date IN DATE DEFAULT NULL,
-    p_end_date IN DATE DEFAULT NULL
-    )
-    IS
+   procedure show_class_offerings (
+      p_start_date in date default null,
+      p_end_date   in date default null
+   ) is
         -- cursor for retrieving class offerings within a certain time frame
-        CURSOR c_class_offerings IS
-            SELECT
-                Classes.class_id,
-                Classes.start_date,
-                Courses.title,
-                Sections.section_code,
-                Instructors.first_name || ' ' || Instructors.last_name AS instructor_name,
-                compute_average_grade(Classes.class_id) AS average_grade --function call
-            FROM Classes
-            JOIN Courses ON
-                Classes.course_id = Courses.course_id
-            JOIN Sections ON
-                Courses.section_code = Sections.section_code
-            JOIN Instructors ON
-                Classes.instr_id = Instructors.instructor_id
-            WHERE Classes.start_date BETWEEN 
-                NVL(p_start_date, ADD_MONTHS(SYSDATE,-12)) AND 
-                NVL(p_end_date, SYSDATE);
-    BEGIN
-        FOR r IN c_class_offerings LOOP
-            DBMS_OUTPUT.PUT_LINE(
-                'CLASS_ID: ' || r.class_id ||
-                ' | START_DATE: ' || TO_CHAR(r.start_date, 'YYYY-MM-DD') ||
-                ' | COURSE_TITLE: ' || r.title ||
-                ' | SECTION_CODE: ' || r.section_code ||
-                ' | INSTRUCTOR: ' || r.instructor_name ||
-                ' | AVERAGE_GRADE: ' || r.average_grade
-            );
-        END LOOP;
-    END;
+      cursor c_class_offerings is
+      select classes.class_id,
+             classes.start_date,
+             courses.title,
+             sections.section_code,
+             instructors.first_name
+             || ' '
+             || instructors.last_name as instructor_name,
+             compute_average_grade(classes.class_id) as average_grade --function call
+        from classes
+        join courses
+      on classes.course_id = courses.course_id
+        join sections
+      on courses.section_code = sections.section_code
+        join instructors
+      on classes.instr_id = instructors.instructor_id
+       where classes.start_date between nvl(
+         p_start_date,
+         add_months(
+                 sysdate,
+                 -12
+              )
+      ) and nvl(
+         p_end_date,
+         sysdate
+      );
+   begin
+      for r in c_class_offerings loop
+         dbms_output.put_line('CLASS_ID: '
+                              || r.class_id
+                              || ' | START_DATE: '
+                              || to_char(
+            r.start_date,
+            'YYYY-MM-DD'
+         )
+                              || ' | COURSE_TITLE: '
+                              || r.title
+                              || ' | SECTION_CODE: '
+                              || r.section_code
+                              || ' | INSTRUCTOR: '
+                              || r.instructor_name
+                              || ' | AVERAGE_GRADE: ' || r.average_grade);
+      end loop;
+   end;
     
     -- count classses per course function
-    FUNCTION count_classes_per_course (
-        p_course_id IN Classes.course_id%TYPE
-    )
-    RETURN number
-    IS
-       v_row_count number;
-    BEGIN
-        SELECT count(*)
-        INTO v_row_count
-        FROM Classes
-        WHERE course_id = p_course_id;
-        RETURN v_row_count;
-    END count_classes_per_course;
+   function count_classes_per_course (
+      p_course_id in classes.course_id%type
+   ) return number is
+      v_row_count number;
+   begin
+      select count(*)
+        into v_row_count
+        from classes
+       where course_id = p_course_id;
+      return v_row_count;
+   end count_classes_per_course;
     
     -- compute average grade function (PRIVATE function)
-    FUNCTION compute_average_grade (
-        p_class_id IN Classes.class_id%TYPE
-    )
-    RETURN number
-    IS
-        v_avg_grade number;
-    BEGIN
-        SELECT NVL(AVG(numeric_grade),0)
-        INTO v_avg_grade
-        FROM class_assessments
-        WHERE class_id = p_class_id;
-        RETURN v_avg_grade;
-    END compute_average_grade;
-    
-END reporting_pkg;
+   function compute_average_grade (
+      p_class_id classes.class_id%type
+   ) return number is
+      v_avg_grade number;
+   begin
+      select nvl(
+         avg(numeric_grade),
+         0
+      )
+        into v_avg_grade
+        from class_assessments
+       where class_id = p_class_id;
+
+      return v_avg_grade;
+   end compute_average_grade;
+
+end reporting_pkg;
 /

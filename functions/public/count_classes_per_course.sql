@@ -1,16 +1,12 @@
---TODO Implement function
-
-CREATE OR REPLACE FUNCTION count_classes_per_course (
-    p_course_id IN Classes.course_id%TYPE
-)
-RETURN number
-IS
+create or replace function count_classes_per_course (
+   p_course_id in classes.course_id%type
+) return number is
    v_row_count number;
-BEGIN
-    SELECT count(*)
-    INTO v_row_count
-    FROM Classes
-    WHERE course_id = p_course_id;
-    RETURN v_row_count;
-END count_classes_per_course;
+begin
+   select count(*)
+     into v_row_count
+     from classes
+    where course_id = p_course_id;
+   return v_row_count;
+end count_classes_per_course;
 /

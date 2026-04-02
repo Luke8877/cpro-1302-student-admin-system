@@ -1,6 +1,5 @@
 -- required objects for the project
 
--- sequence for assignments
 create sequence assessment_id_seq start with 1 increment by 1;
 
 select assessment_id_seq.nextval -- Test for sequence
@@ -17,4 +16,4 @@ create table grade_change_history (
 );
 
 select *
-  from grade_change_history; --Test for table
+  from assessments;
