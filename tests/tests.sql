@@ -100,11 +100,21 @@ end;
 -- =========================================================
 pro   
 pro    ===== REPORTING MODULE =====
+pro --- TEST 9: Show missing grades ---
 
-pro    --- TEST 9: Show missing grades ---
+update enrollments
+   set
+   final_letter_grade = null
+ where stu_id = 101
+   and class_id = 1;
+
+commit;
 
 begin
-   reporting_pkg.show_missing_grades;
+   reporting_pkg.show_missing_grades(
+      date '2000-01-01',
+      sysdate
+   );
 end;
 /
 
@@ -166,7 +176,7 @@ begin
       88,   -- grade
       1,    -- class_id
       101,  -- stu_id
-      1     -- assessment_id (must exist)
+      1     -- assessment_id 
    );
 end;
 /
@@ -183,6 +193,17 @@ begin
 end;
 /
 
+pro --- TEST 16: invalid assessment (ERROR EXPECTED) ---
+
+begin
+   assessment_pkg.enter_student_grade(
+      85,
+      1,
+      101,
+      999
+   );
+end;
+/
 
 -- =========================================================
 -- TRIGGER TEST
@@ -190,7 +211,18 @@ end;
 pro   
 pro    ===== TRIGGER TEST =====
 
-pro    --- TEST 16: Update final grade (should trigger audit) ---
+pro    ===== TRIGGER TEST =====
+
+delete from grade_change_history;
+commit;
+
+pro    --- TEST 17: Update final grade (should trigger audit) ---
+
+update enrollments
+   set
+   final_letter_grade = 'B'
+ where stu_id = 101
+   and class_id = 1;
 
 update enrollments
    set

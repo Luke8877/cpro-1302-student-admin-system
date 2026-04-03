@@ -128,9 +128,9 @@ create or replace package body reporting_pkg is
       return v_row_count;
    end count_classes_per_course;
     
-    -- compute average grade function (PRIVATE function)
+    -- compute average grade
    function compute_average_grade (
-      p_class_id classes.class_id%type
+      p_class_id in classes.class_id%type
    ) return number is
       v_avg_grade number;
    begin

@@ -61,13 +61,7 @@ create or replace package body assessment_pkg as
          class_id,
          stu_id,
          assessment_id
-      ) values ( (
-         select nvl(
-            max(class_assessment_id),
-            0
-         ) + 1
-           from class_assessments
-      ),
+      ) values ( class_assessment_id_seq.nextval,
                  sysdate,
                  p_numeric_grade,
                  p_class_id,
