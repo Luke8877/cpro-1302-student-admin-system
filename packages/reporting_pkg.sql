@@ -14,9 +14,6 @@ create or replace package reporting_pkg is
       p_course_id classes.course_id%type
    ) return number;
 
-   function compute_average_grade (
-      p_class_id classes.class_id%type
-   ) return number;
 
 end reporting_pkg;
 /
@@ -69,6 +66,7 @@ create or replace package body reporting_pkg is
       p_start_date in date default null,
       p_end_date   in date default null
    ) is
+      v_avg number;
         -- cursor for retrieving class offerings within a certain time frame
       cursor c_class_offerings is
       select classes.class_id,
@@ -77,8 +75,7 @@ create or replace package body reporting_pkg is
              sections.section_code,
              instructors.first_name
              || ' '
-             || instructors.last_name as instructor_name,
-             compute_average_grade(classes.class_id) as average_grade --function call
+             || instructors.last_name as instructor_name
         from classes
         join courses
       on classes.course_id = courses.course_id
@@ -98,6 +95,7 @@ create or replace package body reporting_pkg is
       );
    begin
       for r in c_class_offerings loop
+         v_avg := compute_average_grade(r.class_id);
          dbms_output.put_line('CLASS_ID: '
                               || r.class_id
                               || ' | START_DATE: '
@@ -111,7 +109,7 @@ create or replace package body reporting_pkg is
                               || r.section_code
                               || ' | INSTRUCTOR: '
                               || r.instructor_name
-                              || ' | AVERAGE_GRADE: ' || r.average_grade);
+                              || ' | AVERAGE_GRADE: ' || v_avg);
       end loop;
    end;
     

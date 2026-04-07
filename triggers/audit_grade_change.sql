@@ -3,7 +3,13 @@ create or replace trigger audit_grade_change after
    for each row
 begin
    -- Only log if the grade changed
-   if :old.final_letter_grade != :new.final_letter_grade then
+   if nvl(
+      :old.final_letter_grade,
+      'NULL'
+   ) != nvl(
+      :new.final_letter_grade,
+      'NULL'
+   ) then
       insert into grade_change_history (
          stu_id,
          class_id,
