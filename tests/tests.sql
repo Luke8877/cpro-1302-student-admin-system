@@ -140,7 +140,7 @@ pro    --- TEST 11: Count classes per course ---
 declare
    v_count number;
 begin
-   v_count := reporting_pkg.count_classes_per_course(1);
+   v_count := reporting_pkg.count_classes_per_course(1002);
    dbms_output.put_line('Classes for course 1: ' || v_count);
 end;
 /
